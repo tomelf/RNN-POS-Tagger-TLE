@@ -17,13 +17,8 @@ class LSTMPOSTagger(nn.Module):
         self.vocabs = vocabs
         self.tagset = tagset
 
-        # self.word_embeddings = nn.Embedding(len(vocabs), embedding_dim)
-
-        # The LSTM takes word embeddings as inputs, and outputs hidden states
-        # with dimensionality hidden_dim.
         self.lstm = nn.LSTM(embedding_dim, hidden_dim)
 
-        # The linear layer that maps from hidden state space to tag space
         self.hidden2tag = nn.Linear(hidden_dim, len(tagset))
         self.hidden = self.init_hidden()
 
@@ -34,15 +29,10 @@ class LSTMPOSTagger(nn.Module):
         return self.w2v[word].tolist() if word in self.w2v else self.w2v["_"].tolist()
 
     def init_hidden(self):
-        # Before we've done anything, we dont have any hidden state.
-        # Refer to the Pytorch documentation to see exactly
-        # why they have this dimensionality.
-        # The axes semantics are (num_layers, minibatch_size, hidden_dim)
         return (autograd.Variable(torch.zeros(1, 1, self.hidden_dim)).cuda(),
                 autograd.Variable(torch.zeros(1, 1, self.hidden_dim)).cuda())
 
     def forward(self, sentence):
-        # embeds = self.word_embeddings(sentence)
         lstm_out, self.hidden = self.lstm(
             sentence.view(len(sentence), 1, -1), self.hidden)
         tag_space = self.hidden2tag(lstm_out.view(len(sentence), -1))
@@ -82,7 +72,7 @@ class LSTMPOSTagger(nn.Module):
         self.dev_accuracy = []
 
         print("Start model training")
-        for e in range(epoch):  # again, normally you would NOT do 300 epochs, it is toy data
+        for e in range(epoch):
             for i in range(len(self.X_train)):
                 sentence = self.X_train[i][0]
                 tags = self.X_train[i][1]

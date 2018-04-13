@@ -58,7 +58,7 @@ def main():
     actuals = []
     tag_to_ix_list = sorted(tag_to_ix.items(), key=lambda k: k[1])
 
-    print("Evalute test accuracy")
+    print("Evaluate test accuracy")
     for i in range(len(X_test)):
         actual = model.prepare_sequence(X_train[i][1], tag_to_ix)
         _, pred = torch.max(model.test(X_train[i][0]), 1)
