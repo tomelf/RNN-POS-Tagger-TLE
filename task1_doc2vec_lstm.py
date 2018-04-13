@@ -51,13 +51,14 @@ def main():
     model = LSTMPOSTagger(EMBEDDING_DIM, HIDDEN_DIM, word_to_ix, tag_to_ix)
     model.cuda()
     model.set_train_data(X_train)
-    model.train(epoch=5)
+    model.set_dev_data(X_dev)
+    model.train(epoch=1000)
 
     preds = []
     actuals = []
     tag_to_ix_list = sorted(tag_to_ix.items(), key=lambda k: k[1])
 
-    print("Evalute test set")
+    print("Evalute test accuracy")
     for i in range(len(X_test)):
         actual = model.prepare_sequence(X_train[i][1], tag_to_ix)
         _, pred = torch.max(model.test(X_train[i][0]), 1)

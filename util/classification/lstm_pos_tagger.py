@@ -3,8 +3,10 @@ import torch.autograd as autograd
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import pandas as pd
 
 from gensim.models import KeyedVectors
+from sklearn import metrics
 
 class LSTMPOSTagger(nn.Module):
     def __init__(self, embedding_dim, hidden_dim, vocabs, tagset):
@@ -41,9 +43,8 @@ class LSTMPOSTagger(nn.Module):
 
     def forward(self, sentence):
         # embeds = self.word_embeddings(sentence)
-        embeds = sentence
         lstm_out, self.hidden = self.lstm(
-            embeds.view(len(sentence), 1, -1), self.hidden)
+            sentence.view(len(sentence), 1, -1), self.hidden)
         tag_space = self.hidden2tag(lstm_out.view(len(sentence), -1))
         tag_scores = F.softmax(tag_space, dim=1)
         # tag_scores = F.log_softmax(tag_space, dim=1)
@@ -63,6 +64,9 @@ class LSTMPOSTagger(nn.Module):
     def set_train_data(self, X_train):
         self.X_train = X_train
 
+    def set_dev_data(self, X_dev):
+        self.X_dev = X_dev
+
     def train(self, epoch=300):
         word_to_ix = self.vocabs
         tag_to_ix = self.tagset
@@ -71,6 +75,11 @@ class LSTMPOSTagger(nn.Module):
         # loss_function = nn.NLLLoss().cuda()
         loss_function = nn.CrossEntropyLoss().cuda()
         optimizer = optim.SGD(self.parameters(), lr=0.1)
+
+        self.train_loss = []
+        self.dev_loss = []
+        self.train_accuracy = []
+        self.dev_accuracy = []
 
         print("Start model training")
         for e in range(epoch):  # again, normally you would NOT do 300 epochs, it is toy data
@@ -93,10 +102,57 @@ class LSTMPOSTagger(nn.Module):
             if (e+1)%1 == 0:
                 print("Finish training epochs {}".format(e+1))
 
+            if hasattr(self, 'X_dev'):
+                model = self
+
+                print("Evalute train loss and accuracy")
+                actuals = []
+                preds = []
+                running_loss = 0.0
+                for i in range(len(self.X_train)):
+                    actual = model.prepare_sequence(self.X_train[i][1], tag_to_ix)
+                    pred = model.test(self.X_train[i][0])
+
+                    loss = loss_function(pred, actual)
+                    running_loss += loss.data[0]
+
+                    _, pred = torch.max(pred, 1)
+                    preds += pred.data.cpu().numpy().tolist()
+                    actuals += actual.data.cpu().numpy().tolist()
+                self.train_loss.append(running_loss)
+                self.train_accuracy.append(metrics.accuracy_score(actuals, preds))
+
+                print("Evalute dev loss and accuracy")
+                actuals = []
+                preds = []
+                running_loss = 0.0
+                for i in range(len(self.X_dev)):
+                    actual = model.prepare_sequence(self.X_dev[i][1], tag_to_ix)
+                    pred = model.test(self.X_dev[i][0])
+
+                    loss = loss_function(pred, actual)
+                    running_loss += loss.data[0]
+
+                    _, pred = torch.max(pred, 1)
+                    preds += pred.data.cpu().numpy().tolist()
+                    actuals += actual.data.cpu().numpy().tolist()
+                self.dev_loss.append(running_loss)
+                self.dev_accuracy.append(metrics.accuracy_score(actuals, preds))
+
+                pd.DataFrame({
+                    "train_loss": self.train_loss,
+                    "train_accuracy": self.train_accuracy,
+                    "dev_loss": self.dev_loss,
+                    "dev_accuracy": self.dev_accuracy,
+                }).to_csv("training_stats.csv")
+
     def test(self, sent_vec):
         # sent = self.prepare_sequence(sent_vec, self.vocabs)
         sent = self.prepare_sequence_w2v(sent_vec)
         return self(sent)
+
+    def get_training_loss(self):
+        return self.training_loss
 
     def to_one_hot(self, target):
         # oneHot encoding
