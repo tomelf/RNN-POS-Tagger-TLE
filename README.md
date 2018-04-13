@@ -409,7 +409,7 @@ In this task, a POS tagger was trained with all train data (4124 sentences), val
 In this project, I mainly use [PyTorch](http://pytorch.org/) to implement the RNN models. The following are what I've already implemented:
 
 #### Long Short-Term Memory (LSTM)
->Long short-term memory (LSTM) units (or blocks) are a building unit for layers of a recurrent neural network (RNN). A RNN composed of LSTM units is often called an LSTM network. A common LSTM unit is composed of a cell, an input gate, an output gate and a forget gate. The cell is responsible for "remembering" values over arbitrary time intervals; hence the word "memory" in LSTM. [Wikepedia](https://en.wikipedia.org/wiki/Long_short-term_memory)
+>Long short-term memory (LSTM) units (or blocks) are a building unit for layers of a recurrent neural network (RNN). A RNN composed of LSTM units is often called an LSTM network. A common LSTM unit is composed of a cell, an input gate, an output gate and a forget gate. The cell is responsible for "remembering" values over arbitrary time intervals; hence the word "memory" in LSTM. [Wikipedia](https://en.wikipedia.org/wiki/Long_short-term_memory)
 
 The following is the high-level architecture for the LSTM model:
 
