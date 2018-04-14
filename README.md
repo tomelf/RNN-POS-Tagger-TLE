@@ -435,18 +435,18 @@ I use the pre-trained [Word2Vec model](https://drive.google.com/file/d/0B7XkCwpI
 
 #### Performance
 
-The dataset was divided into train, dev, test sets. I used train and dev sets to observe the fluctuation of accuracy and loss during the training process of 1000 epochs. There are 17 different POS tags in this experiment. The prediction is considered as true postive only if it is the same as the actual POS tag. 
+The dataset was divided into train, dev, test sets. I used train and dev sets to observe the fluctuation of accuracy and loss during the training process of 1000 epochs. There are 17 different POS tags in this experiment. The prediction is considered as true postive only if it is the same as the actual POS tag. The optimizer of RNNs is Stochastic Gradient Descent (SGD) with different learning rate (lr). The loss function is Cross Entropy Loss.
 
 The following is the best performance after 100 epochs:
 
-- Learning Rate (lr) = 0.5
+- lr = 0.5
 
 | Model | Train Accuracy | Dev Accuracy  | Test Accuracy |
 | ------------- |:-------------|:-------------|:-------------:|
 | LSTM  | 89.28% | 83.90% | 89.20% |
 | BI-LSTM  | 93.25% | 88.00% | 93.30% |
 
-- Learning Rate (lr) = 0.1
+- lr = 0.1
 
 | Model | Train Accuracy | Dev Accuracy  | Test Accuracy |
 | ------------- |:-------------|:-------------|:-------------:|
