@@ -11,8 +11,8 @@ POS tagging could be the fundamentals of many NLP/NLU tasks, such as Name Entity
 - LSTM with a Conditional Random Field (CRF) layer (LSTM-CRF) 
 - Bidirectional LSTM with a CRF layer (BI-LSTM-CRF)
 
-(**Update 2018/04/14: the BI-LSTM is added**)
-(**Update 2018/04/12: the basic LSTM is added**)
+(**Update 2018/04/14: the BI-LSTM is added**)  
+(**Update 2018/04/12: the basic LSTM is added**)  
 
 ## Dataset
 
