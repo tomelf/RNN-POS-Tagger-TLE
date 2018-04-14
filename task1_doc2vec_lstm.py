@@ -48,11 +48,14 @@ def main():
             if tag not in tag_to_ix:
                 tag_to_ix[tag] = len(tag_to_ix)
 
+    EMBEDDING_DIM = len(word_to_ix.keys())
+    HIDDEN_DIM = int(len(word_to_ix.keys())/2)
+
     model = LSTMPOSTagger(EMBEDDING_DIM, HIDDEN_DIM, word_to_ix, tag_to_ix)
     model.cuda()
     model.set_train_data(X_train)
-    model.set_dev_data(X_dev)
-    model.train(epoch=1000)
+    # model.set_dev_data(X_dev)
+    model.train(epoch=10)
 
     preds = []
     actuals = []
