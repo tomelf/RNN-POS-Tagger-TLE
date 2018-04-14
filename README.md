@@ -396,6 +396,28 @@ train_data[0]
 
 
 
+## RNN Models
+
+In this project, I mainly use [PyTorch](http://pytorch.org/) to implement the RNN models. The following are what I've already implemented:
+
+### Long Short-Term Memory (LSTM)
+>Long short-term memory (LSTM) units (or blocks) are a building unit for layers of a recurrent neural network (RNN). A RNN composed of LSTM units is often called an LSTM network. A common LSTM unit is composed of a cell, an input gate, an output gate and a forget gate. The cell is responsible for "remembering" values over arbitrary time intervals; hence the word "memory" in LSTM. [Wikipedia](https://en.wikipedia.org/wiki/Long_short-term_memory)
+
+The following is the high-level architecture for the LSTM model:
+
+![Task1_LSTM](figures/task1-w2v-lstm.png)
+
+### Bidirectional LSTM (BI-LSTM)
+
+The BI-LSTM model is derived from Bidrectional RNN (BRNN) (Schuster and Paliwal, 1997).
+
+>The principle of BRNN is to split the neurons of a regular RNN into two directions, one for positive time direction (forward states), and another for negative time direction (backward states). Those two states’ output are not connected to inputs of the opposite direction states. By using two time directions, input information from the past and future of the current time frame can be used unlike standard RNN which requires the delays for including future information. [Wikipedia](https://en.wikipedia.org/wiki/Bidirectional_recurrent_neural_networks)
+
+The BI-LSTM is based on BRNN but replaces the RNN units with LSTM units. The following is the high-level architecture for the BI-LSTM model:
+
+![Task1_BILSTM](figures/task1-w2v-bi-lstm.png)
+
+
 ## Task 1: Continuous POS tagging with RNNs
 
 ### Architecture
@@ -408,28 +430,6 @@ In this task, a POS tagger was trained with all train data (4124 sentences), val
 ### Word Features
 
 I use the pre-trained [Word2Vec model](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit) built with Google News corpus (3 million 300-dimension English word vectors). Although it might not be the best choice (e.g. Google News corpus might not be representative for the English Learner text), it's still a legitimate choice: 1) It saves my time to build a large dictionary which cover all words in the UD English-ESL/TLE corpus; 2) It saves my time and computing resources to build large/sparse unigram vectors for words, and I don't need to worry about dimension reduction for now; 3) 300-dim w2v vector is small enough for this task, and the dimension is fixed so the vector can be directly used in NN. 4) It's free and available on Google Drive :). 
-
-### RNN Models
-
-In this project, I mainly use [PyTorch](http://pytorch.org/) to implement the RNN models. The following are what I've already implemented:
-
-#### Long Short-Term Memory (LSTM)
->Long short-term memory (LSTM) units (or blocks) are a building unit for layers of a recurrent neural network (RNN). A RNN composed of LSTM units is often called an LSTM network. A common LSTM unit is composed of a cell, an input gate, an output gate and a forget gate. The cell is responsible for "remembering" values over arbitrary time intervals; hence the word "memory" in LSTM. [Wikipedia](https://en.wikipedia.org/wiki/Long_short-term_memory)
-
-The following is the high-level architecture for the LSTM model:
-
-![Task1_LSTM](figures/task1-w2v-lstm.png)
-
-#### Bidirectional LSTM (BI-LSTM)
-
-The BI-LSTM model is derived from Bidrectional RNN (BRNN) (Schuster and Paliwal, 1997).
-
->The principle of BRNN is to split the neurons of a regular RNN into two directions, one for positive time direction (forward states), and another for negative time direction (backward states). Those two states’ output are not connected to inputs of the opposite direction states. By using two time directions, input information from the past and future of the current time frame can be used unlike standard RNN which requires the delays for including future information. [Wikipedia](https://en.wikipedia.org/wiki/Bidirectional_recurrent_neural_networks)
-
-The BI-LSTM is based on BRNN but replaces the RNN units with LSTM units. The following is the high-level architecture for the BI-LSTM model:
-
-![Task1_BILSTM](figures/task1-w2v-bi-lstm.png)
-
 
 ### Experiments
 
@@ -460,10 +460,12 @@ The BI-LSTM model consistantly performs better than the LSTM model and achieve 9
 The following are train/dev accuracy and loss in 100 epochs:
 
 - lr = 0.5
+
 ![Task1_Accu_lr0.5](figures/lstm_lr-0.5_accu_comparison.png)
 ![Task1_Loss_lr0.5](figures/lstm_lr-0.5_loss_comparison.png)
 
 - lr = 0.1
+
 ![Task1_Accu_lr0.1](figures/lstm_lr-0.1_accu_comparison.png)
 ![Task1_Loss_lr0.1](figures/lstm_lr-0.1_loss_comparison.png)
 
