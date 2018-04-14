@@ -30,8 +30,6 @@ def main():
     dev_data, dev_data_corrected, \
     test_data, test_data_corrected = data_list
 
-    EMBEDDING_DIM = 300
-    HIDDEN_DIM = 200
     X_train = [[d["form"].tolist(), d["upostag"].tolist()] for d in train_data]
     X_dev = [[d["form"].tolist(), d["upostag"].tolist()] for d in dev_data]
     X_test = [[d["form"].tolist(), d["upostag"].tolist()] for d in test_data]
@@ -47,15 +45,19 @@ def main():
         for tag in tags:
             if tag not in tag_to_ix:
                 tag_to_ix[tag] = len(tag_to_ix)
+    if "_" not in word_to_ix:
+        word_to_ix["_"] = len(word_to_ix.keys())+1
+    if "_" not in tag_to_ix:
+        tag_to_ix["_"] = len(tag_to_ix.keys())+1
 
-    EMBEDDING_DIM = len(word_to_ix.keys())
-    HIDDEN_DIM = int(len(word_to_ix.keys())/2)
+    EMBEDDING_DIM = 300
+    HIDDEN_DIM = 200
 
-    model = LSTMPOSTagger(EMBEDDING_DIM, HIDDEN_DIM, word_to_ix, tag_to_ix)
+    model = LSTMPOSTagger(EMBEDDING_DIM, HIDDEN_DIM, tag_to_ix, bidirectional=False)
     model.cuda()
     model.set_train_data(X_train)
-    # model.set_dev_data(X_dev)
-    model.train(epoch=10)
+    model.set_dev_data(X_dev)
+    model.train(epoch=100, lr=0.1)
 
     preds = []
     actuals = []

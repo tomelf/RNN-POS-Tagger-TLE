@@ -11,6 +11,7 @@ POS tagging could be the fundamentals of many NLP/NLU tasks, such as Name Entity
 - LSTM with a Conditional Random Field (CRF) layer (LSTM-CRF) 
 - Bidirectional LSTM with a CRF layer (BI-LSTM-CRF)
 
+(**Update 2018/04/14: the BI-LSTM is added**)
 (**Update 2018/04/12: the basic LSTM is added**)
 
 ## Dataset
@@ -404,6 +405,10 @@ In this task, a POS tagger was trained with all train data (4124 sentences), val
 ![Task1 Architecture](figures/task1-arch.png)
 
 
+### Word Features
+
+I use the pre-trained [Word2Vec model](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit) built with Google News corpus (3 million 300-dimension English word vectors). Although it might not be the best choice (e.g. Google News corpus might not be representative for the English Learner text), it's still a legitimate choice: 1) It saves my time to build a large dictionary which cover all words in the UD English-ESL/TLE corpus; 2) It saves my time and computing resources to build large/sparse unigram vectors for words, and I don't need to worry about dimension reduction for now; 3) 300-dim w2v vector is small enough for this task, and the dimension is fixed so the vector can be directly used in NN. 4) It's free and available on Google Drive :). 
+
 ### RNN Models
 
 In this project, I mainly use [PyTorch](http://pytorch.org/) to implement the RNN models. The following are what I've already implemented:
@@ -413,22 +418,61 @@ In this project, I mainly use [PyTorch](http://pytorch.org/) to implement the RN
 
 The following is the high-level architecture for the LSTM model:
 
-![Task1_Feature](figures/task1-w2v-lstm.png)
+![Task1_LSTM](figures/task1-w2v-lstm.png)
 
-#### Word Features
+#### Bidirectional LSTM (BI-LSTM)
 
-I use the pre-trained [Word2Vec model](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit) built with Google News corpus (3 million 300-dimension English word vectors). Although it might not be the best choice (e.g. Google News corpus might not be representative for the English Learner text), it's still a legitimate choice: 1) It saves my time to build a large dictionary which cover all words in the UD English-ESL/TLE corpus; 2) It saves my time and computing resources to build large/sparse unigram vectors for words, and I don't need to worry about dimension reduction for now; 3) 300-dim w2v vector is small enough for this task, and the dimension is fixed so the vector can be directly used in NN. 4) It's free and available on Google Drive :). 
+The BI-LSTM model is derived from Bidrectional RNN (BRNN) (Schuster and Paliwal, 1997).
 
-### Parameter Tuning
+>The principle of BRNN is to split the neurons of a regular RNN into two directions, one for positive time direction (forward states), and another for negative time direction (backward states). Those two states’ output are not connected to inputs of the opposite direction states. By using two time directions, input information from the past and future of the current time frame can be used unlike standard RNN which requires the delays for including future information. [Wikipedia](https://en.wikipedia.org/wiki/Bidirectional_recurrent_neural_networks)
 
-#### Number of epochs
+The BI-LSTM is based on BRNN but replaces the RNN units with LSTM units. The following is the high-level architecture for the BI-LSTM model:
 
-The dataset was divided into train, dev, test sets. I used train and dev sets to observe the fluctuation of accuracy and loss during the training process of 1000 epochs. There are 17 different POS tags in this experiment. The prediction is considered correct only if it is the same as the actual POS tag. At the end of the 1000 epochs, the LSTM model achieves **88.09%** training accuracy, **80.9%** validation accuracy, and **88.42%** test accuracy. According to the following figures, there is no apparent overfitting, and the best number of training epoch is around 650-700. However, the intersection between train loss line and dev loss line was not shown in the experiment.
+![Task1_BILSTM](figures/task1-w2v-bi-lstm.png)
 
-![Task1_Accu](figures/accu_linear.png)
-![Task1_Loss](figures/loss_linear.png)
+
+### Experiments
+
+#### Performance
+
+The dataset was divided into train, dev, test sets. I used train and dev sets to observe the fluctuation of accuracy and loss during the training process of 1000 epochs. There are 17 different POS tags in this experiment. The prediction is considered as true postive only if it is the same as the actual POS tag. 
+
+The following is the best performance after 100 epochs:
+
+- Learning Rate (lr) = 0.5
+
+| Model | Train Accuracy | Dev Accuracy  | Test Accuracy |
+| ------------- |:-------------|:-------------|:-------------:|
+| LSTM  | 89.28% | 83.90% | 89.20% |
+| BI-LSTM  | 93.25% | 88.00% | 93.30% |
+
+- Learning Rate (lr) = 0.1
+
+| Model | Train Accuracy | Dev Accuracy  | Test Accuracy |
+| ------------- |:-------------|:-------------|:-------------:|
+| LSTM  | 73.77% | 71.86% | 74.11% |
+| BI-LSTM  | 78.37% | 76.17% | 78.54% |
+
+The BI-LSTM model consistantly performs better than the LSTM model and achieve 93% in accuracy (lr=0.5). 
+
+#### Parameter Tuning
+
+The following are train/dev accuracy and loss in 100 epochs:
+
+- lr = 0.5
+![Task1_Accu_lr0.5](figures/lstm_lr-0.5_accu_comparison.png)
+![Task1_Loss_lr0.5](figures/lstm_lr-0.5_loss_comparison.png)
+
+- lr = 0.1
+![Task1_Accu_lr0.1](figures/lstm_lr-0.1_accu_comparison.png)
+![Task1_Loss_lr0.1](figures/lstm_lr-0.1_loss_comparison.png)
+
+
+According to the following figures, both LSTM and BI-LSTM are not apparent overfitting. BI-LSTM learned faster and better than LSTM model.
+
 
 ## References
 
 1. Berzak, Y., Kenney, J., Spadine, C., Wang, J. X., Lam, L., Mori, K. S., ... & Katz, B. (2016). Universal dependencies for learner English. arXiv preprint arXiv:1605.04278.
 2. Yannakoudakis, H., Briscoe, T., & Medlock, B. (2011, June). A new dataset and method for automatically grading ESOL texts. In Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics: Human Language Technologies-Volume 1 (pp. 180-189). Association for Computational Linguistics.
+3. Schuster, M., & Paliwal, K. K. (1997). Bidirectional recurrent neural networks. IEEE Transactions on Signal Processing, 45(11), 2673-2681.

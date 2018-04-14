@@ -9,17 +9,16 @@ from gensim.models import KeyedVectors
 from sklearn import metrics
 
 class LSTMPOSTagger(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, vocabs, tagset):
+    def __init__(self, embedding_dim, hidden_dim, tagset, bidirectional=False):
         super(LSTMPOSTagger, self).__init__()
 
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
-        self.vocabs = vocabs
         self.tagset = tagset
+        self.bidirectional = bidirectional
 
-        self.lstm = nn.LSTM(embedding_dim, hidden_dim)
-
-        self.hidden2tag = nn.Linear(hidden_dim, len(tagset))
+        self.lstm = nn.LSTM(embedding_dim, hidden_dim, bidirectional=bidirectional)
+        self.hidden2tag = nn.Linear(hidden_dim*(2 if bidirectional else 1), len(tagset))
         self.hidden = self.init_hidden()
 
     def google_w2v_embedding(self, word):
@@ -29,8 +28,8 @@ class LSTMPOSTagger(nn.Module):
         return self.w2v[word].tolist() if word in self.w2v else self.w2v["_"].tolist()
 
     def init_hidden(self):
-        return (autograd.Variable(torch.zeros(1, 1, self.hidden_dim)).cuda(),
-                autograd.Variable(torch.zeros(1, 1, self.hidden_dim)).cuda())
+        return (autograd.Variable(torch.zeros((2 if self.bidirectional else 1), 1, self.hidden_dim)).cuda(),
+                autograd.Variable(torch.zeros((2 if self.bidirectional else 1), 1, self.hidden_dim)).cuda())
 
     def forward(self, sentence):
         lstm_out, self.hidden = self.lstm(
@@ -41,7 +40,6 @@ class LSTMPOSTagger(nn.Module):
         return tag_scores
 
     def prepare_sequence(self, seq, to_ix):
-        # idxs = [self.to_one_hot(to_ix[w]) for w in seq if w in to_ix]
         idxs = [to_ix[w] for w in seq if w in to_ix]
         tensor = torch.LongTensor(idxs).cuda()
         return autograd.Variable(tensor).cuda()
@@ -57,14 +55,13 @@ class LSTMPOSTagger(nn.Module):
     def set_dev_data(self, X_dev):
         self.X_dev = X_dev
 
-    def train(self, epoch=300):
-        word_to_ix = self.vocabs
+    def train(self, epoch=300, lr=0.5):
         tag_to_ix = self.tagset
 
         # loss_function = nn.MSELoss().cuda()
         # loss_function = nn.NLLLoss().cuda()
         loss_function = nn.CrossEntropyLoss().cuda()
-        optimizer = optim.SGD(self.parameters(), lr=0.1)
+        optimizer = optim.SGD(self.parameters(), lr=lr)
 
         self.train_loss = []
         self.dev_loss = []
@@ -109,7 +106,7 @@ class LSTMPOSTagger(nn.Module):
                     _, pred = torch.max(pred, 1)
                     preds += pred.data.cpu().numpy().tolist()
                     actuals += actual.data.cpu().numpy().tolist()
-                self.train_loss.append(running_loss)
+                self.train_loss.append(running_loss/len(self.X_train))
                 self.train_accuracy.append(metrics.accuracy_score(actuals, preds))
 
                 print("Evalute dev loss and accuracy")
@@ -126,7 +123,7 @@ class LSTMPOSTagger(nn.Module):
                     _, pred = torch.max(pred, 1)
                     preds += pred.data.cpu().numpy().tolist()
                     actuals += actual.data.cpu().numpy().tolist()
-                self.dev_loss.append(running_loss)
+                self.dev_loss.append(running_loss/len(self.X_dev))
                 self.dev_accuracy.append(metrics.accuracy_score(actuals, preds))
 
                 pd.DataFrame({
@@ -137,13 +134,8 @@ class LSTMPOSTagger(nn.Module):
                 }).to_csv("training_stats.csv")
 
     def test(self, sent_vec):
-        # sent = self.prepare_sequence(sent_vec, self.vocabs)
         sent = self.prepare_sequence_w2v(sent_vec)
         return self(sent)
 
     def get_training_loss(self):
         return self.training_loss
-
-    def to_one_hot(self, target):
-        # oneHot encoding
-        return [1 if i==target else 0 for i in range(len(self.tagset))]
