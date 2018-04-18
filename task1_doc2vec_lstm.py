@@ -46,10 +46,10 @@ def main():
             if tag not in tag_to_ix:
                 tag_to_ix[tag] = len(tag_to_ix)
     if "_" not in word_to_ix:
-        word_to_ix["_"] = len(word_to_ix.keys())+1
+        word_to_ix["_"] = len(word_to_ix.keys())
     if "_" not in tag_to_ix:
-        tag_to_ix["_"] = len(tag_to_ix.keys())+1
-
+        tag_to_ix["_"] = len(tag_to_ix.keys())
+        
     EMBEDDING_DIM = 300
     HIDDEN_DIM = 200
 
@@ -57,7 +57,7 @@ def main():
     model.cuda()
     model.set_train_data(X_train)
     model.set_dev_data(X_dev)
-    model.train(epoch=100, lr=0.1)
+    model.train(epoch=10, lr=0.5, minibatch_size=1)
 
     preds = []
     actuals = []
@@ -65,8 +65,8 @@ def main():
 
     print("Evaluate test accuracy")
     for i in range(len(X_test)):
-        actual = model.prepare_sequence(X_train[i][1], tag_to_ix)
-        _, pred = torch.max(model.test(X_train[i][0]), 1)
+        actual = model.prepare_sequence(X_test[i][1], tag_to_ix)
+        _, pred = torch.max(model.test(X_test[i][0]), 1)
 
         preds += pred.data.cpu().numpy().tolist()
         actuals += actual.data.cpu().numpy().tolist()
