@@ -470,7 +470,7 @@ The following are train/dev accuracy and loss in 100 epochs:
 ![Task1_Loss_lr0.1](figures/lstm_lr-0.1_loss_comparison.png)
 
 
-According to the following figures, both LSTM and BI-LSTM are not apparent overfitting. BI-LSTM learned faster and better than LSTM model.
+According to the above figures, both LSTM and BI-LSTM are not apparently overfitting. BI-LSTM learned faster and better than LSTM model.
 
 
 ## References
