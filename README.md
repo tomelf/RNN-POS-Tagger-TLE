@@ -542,18 +542,7 @@ print(stats_df)
 
 We train BI-LSTM models (500 epochs, SGD learning rate=0.5) for sentences in every lanugage respectively, and then test the tagging accuracy on sentences in other languages. That is, we train a POS tagger based on sentences written by learners with Japanese native language background, and use the tagger to tag sentences written by learners with other native language background. The following are the results.
 
-| Train\Test | Russian | French | Spanish | Japanese | Chinese | Turkish | Portuguese | Korean | German | Italian |
-| ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- :| 
-| Russian | 87.71% | 77.37% | 77.36% | 76.41% | 76.09% | 77.78% | 76.58% | 76.78% | 77.91% | 76.46% |
-| French | 76.92% | 89.76% | 78.34% | 77.21% | 77.56% | 79.17% | 78.23% | 77.36% | 78.91% | 78.08% |
-| Spanish | 77.07% | 78.82% | 89.39% | 77.73% | 77.34% | 79.07% | 77.93% | 76.90% | 79.49% | 77.63% |
-| Japanese | 76.01% | 77.15% | 77.40% | 87.61% | 76.58% | 77.50% | 76.38% | 76.60% | 78.24% | 76.52% |
-| Chinese | 81.26% | 81.57% | 81.32% | 81.99% | 94.73% | 82.92% | 81.52% | 81.90% | 81.45% | 80.82% |
-| Turkish | 74.72% | 76.17% | 76.13% | 75.22% | 74.70% | 86.92% | 75.84% | 75.53% | 76.64% | 75.55% |
-| Portuguese | 80.74% | 82.33% | 82.37% | 81.41% | 81.05% | 82.39% | 94.98% | 81.99% | 82.40% | 82.45% |
-| Korean | 80.05% | 80.78% | 80.70% | 81.19% | 80.24% | 81.64% | 80.86% | 94.61% | 81.10% | 79.84% |
-| German | 79.94% | 81.96% | 81.61% | 80.97% | 80.59% | 82.00% | 81.62% | 80.68% | 95.84% | 81.82% |
-| Italian | 77.31% | 78.99% | 78.58% | 78.06% | 77.51% | 79.05% | 78.88% | 77.18% | 79.92% | 89.61% |
+![Task2_Stats](figures/task2-stats.png)
 
 
 ## References
