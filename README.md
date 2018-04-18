@@ -461,7 +461,7 @@ According to the following figures, both LSTM and BI-LSTM are not apparent overf
 
 In this task, I would like to discover the POS resemblance between learners with different native language background. The basic hypothesis is that a person's writing style in English is subconsciously influeced by the grammar of his/her native language. For example, the basic sentence structure in English is (Subject+Verb+Object), but in Japanese is (Subject+Object+Verb). Moreover, some languages do not have strict rules about the grammatical order of words, but they have abundant morphemes to construct sentences.
 
-In the following experiments, we use the train data in the dataset. The following is the statistics of the train data regarding leaner's native language background.
+In the following experiments, we use the train data in the dataset. Here are some stats of the train data regarding learner's native language background.
 
 
 ```python
@@ -540,9 +540,15 @@ print(stats_df)
     Italian     423.0  28.699764  4.388392  38.0  20.0
 
 
-We train BI-LSTM models (500 epochs, SGD learning rate=0.5) for sentences in every lanugage respectively, and then test the tagging accuracy on sentences in other languages. That is, we train a POS tagger based on sentences written by learners with Japanese native language background, and use the tagger to tag sentences written by learners with other native language background. The following are the results.
+We train BI-LSTM models (500 epochs, SGD learning rate=0.5) for sentences in every lanugage respectively, and then test the tagging accuracy on sentences in other languages. That is, we train a POS tagger based on sentences written by learners with Japanese native language background, and use the tagger to tag sentences written by learners with other native language background. The following are the results of POS tagging accuracy.
 
 ![Task2_Stats](figures/task2-stats.png)
+
+The diagonal numbers show how well the models fit their training data. Although it shows some models learned faster and some learned slower, unfortunately, so far there is no significant proof that any pair of languages is more or less similar with each other in the perspective of POS resemblance. 
+
+However, under the same experiment settings, we still learned some from the results:
+- Models trained by learners with Chinese, Portuguese, Korean and German native language background learn faster and perform better in POS tagging.
+- In some pairs of languages, there is higher difference between (train on language A -> test on language B) and (train on language B -> test on language A).
 
 
 ## References
