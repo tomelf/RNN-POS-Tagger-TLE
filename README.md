@@ -11,8 +11,13 @@ POS tagging could be the fundamentals of many NLP/NLU tasks, such as Name Entity
 - LSTM with a Conditional Random Field (CRF) layer (LSTM-CRF) 
 - Bidirectional LSTM with a CRF layer (BI-LSTM-CRF)
 
+I will apply the above models on two tasks:
+1. Continuous POS tagging with RNNs
+2. POS resemblance between learners with different native language background
+
+(**Update 2018/04/18: task 2 is added**)  
 (**Update 2018/04/14: the BI-LSTM is added**)  
-(**Update 2018/04/12: the basic LSTM is added**)  
+(**Update 2018/04/12: the basic LSTM and task 1 is added**)  
 
 ## Dataset
 
@@ -64,20 +69,12 @@ train_meta.head()
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
-      <th></th>
+      <th>id</th>
       <th>doc_id</th>
       <th>sent</th>
       <th>native_language</th>
       <th>age_range</th>
       <th>score</th>
-    </tr>
-    <tr>
-      <th>id</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -128,7 +125,7 @@ train_meta.head()
 
 
 ### Sentence Format
-In this project, I will only use "form" (words) and "upostag" (part-of-speech tags).
+In this project, we will only use "form" (words) and "upostag" (part-of-speech tags).
 
 
 ```python
@@ -142,7 +139,7 @@ train_data[0]
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
-      <th></th>
+      <th>id</th>
       <th>form</th>
       <th>lemma</th>
       <th>upostag</th>
@@ -153,19 +150,6 @@ train_data[0]
       <th>deps</th>
       <th>misc</th>
       <th>meta_id</th>
-    </tr>
-    <tr>
-      <th>id</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -398,7 +382,7 @@ train_data[0]
 
 ## RNN Models
 
-In this project, I mainly use [PyTorch](http://pytorch.org/) to implement the RNN models. The following are what I've already implemented:
+In this project, we mainly use [PyTorch](http://pytorch.org/) to implement the RNN models. The following are what I've already implemented:
 
 ### Long Short-Term Memory (LSTM)
 >Long short-term memory (LSTM) units (or blocks) are a building unit for layers of a recurrent neural network (RNN). A RNN composed of LSTM units is often called an LSTM network. A common LSTM unit is composed of a cell, an input gate, an output gate and a forget gate. The cell is responsible for "remembering" values over arbitrary time intervals; hence the word "memory" in LSTM. [Wikipedia](https://en.wikipedia.org/wiki/Long_short-term_memory)
@@ -429,13 +413,13 @@ In this task, a POS tagger was trained with all train data (4124 sentences), val
 
 ### Word Features
 
-I use the pre-trained [Word2Vec model](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit) built with Google News corpus (3 million 300-dimension English word vectors). Although it might not be the best choice (e.g. Google News corpus might not be representative for the English Learner text), it's still a legitimate choice: 1) It saves my time to build a large dictionary which cover all words in the UD English-ESL/TLE corpus; 2) It saves my time and computing resources to build large/sparse unigram vectors for words, and I don't need to worry about dimension reduction for now; 3) 300-dim w2v vector is small enough for this task, and the dimension is fixed so the vector can be directly used in NN. 4) It's free and available on Google Drive :). 
+We use the pre-trained [Word2Vec model](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit) built with Google News corpus (3 million 300-dimension English word vectors). Although it might not be the best choice (e.g. Google News corpus might not be representative for the English Learner text), it's still a legitimate choice: 1) It saves my time to build a large dictionary which cover all words in the UD English-ESL/TLE corpus; 2) It saves my time and computing resources to build large/sparse unigram vectors for words, and I don't need to worry about dimension reduction for now; 3) 300-dim w2v vector is small enough for this task, and the dimension is fixed so the vector can be directly used in NN. 4) It's free and available on Google Drive :). 
 
 ### Experiments
 
 #### Performance
 
-The dataset was divided into train, dev, test sets. I used train and dev sets to observe the fluctuation of accuracy and loss during the training process of 1000 epochs. There are 17 different POS tags in this experiment. The prediction is considered as true postive only if it is the same as the actual POS tag. The optimizer of RNNs is Stochastic Gradient Descent (SGD) with different learning rate (lr). The loss function is Cross Entropy Loss.
+The dataset was divided into train, dev, test sets. We used train and dev sets to observe the fluctuation of accuracy and loss during the training process of 1000 epochs. There are 17 different POS tags in this experiment. The prediction is considered as true postive only if it is the same as the actual POS tag. The optimizer of RNNs is Stochastic Gradient Descent (SGD) with different learning rate (lr). The loss function is Cross Entropy Loss.
 
 The following is the best performance after 100 epochs:
 
@@ -470,7 +454,106 @@ The following are train/dev accuracy and loss in 100 epochs:
 ![Task1_Loss_lr0.1](figures/lstm_lr-0.1_loss_comparison.png)
 
 
-According to the above figures, both LSTM and BI-LSTM are not apparently overfitting. BI-LSTM learned faster and better than LSTM model.
+According to the following figures, both LSTM and BI-LSTM are not apparent overfitting. BI-LSTM learned faster and better than LSTM model.
+
+
+## Task 2: POS resemblance between learners with different native language background
+
+In this task, I would like to discover the POS resemblance between learners with different native language background. The basic hypothesis is that a person's writing style in English is subconsciously influeced by the grammar of his/her native language. For example, the basic sentence structure in English is (Subject+Verb+Object), but in Japanese is (Subject+Object+Verb). Moreover, some languages do not have strict rules about the grammatical order of words, but they have abundant morphemes to construct sentences.
+
+In the following experiments, we use the train data in the dataset. The following is the statistics of the train data regarding leaner's native language background.
+
+
+```python
+import data_loader
+import pandas as pd
+
+meta_list, data_list = data_loader.load_data(load_train=True, load_dev=False, load_test=False)
+train_meta, train_meta_corrected = meta_list
+train_data, train_data_corrected  = data_list
+```
+
+
+```python
+languages = train_meta["native_language"].unique()
+print("# of Sentence: {}".format(len(train_meta)))
+
+print("Sentence distribution:")
+stats = []
+for language in languages:
+    stats.append(len(train_meta[train_meta["native_language"]==language]))
+stats_df = pd.DataFrame(stats, columns=["# of sentences"], index=languages)
+print(stats_df)
+
+print("Author distribution:")
+stats = []
+for language in languages:
+    stats.append(len(train_meta[train_meta["native_language"]==language]["doc_id"].unique()))
+stats_df = pd.DataFrame(stats, columns=["# of authors"], index=languages)
+print(stats_df)
+
+stats = []
+languages = train_meta["native_language"].unique()
+print("Exam score stats:")
+for language in languages:
+    stats.append(train_meta[train_meta["native_language"]==language]["score"].describe()[['count', 'mean', 'std', 'max', 'min']])
+stats_df = pd.DataFrame(stats, index=languages)
+print(stats_df)
+```
+
+    # of Sentence: 4124
+    Sentence distribution:
+                # of sentences
+    Russian                427
+    French                 401
+    Spanish                428
+    Japanese               407
+    Chinese                414
+    Turkish                404
+    Portuguese             407
+    Korean                 413
+    German                 400
+    Italian                423
+    Author distribution:
+                # of authors
+    Russian               81
+    French               131
+    Spanish              175
+    Japanese              81
+    Chinese               66
+    Turkish               73
+    Portuguese            68
+    Korean                84
+    German                69
+    Italian               76
+    Exam score stats:
+                count       mean       std   max   min
+    Russian     427.0  26.288056  6.179166  40.0   9.0
+    French      401.0  27.630923  4.666738  40.0  17.0
+    Spanish     428.0  26.789720  5.349402  40.0  11.0
+    Japanese    407.0  27.547912  5.040432  39.0  15.0
+    Chinese     414.0  26.268116  6.210832  40.0  14.0
+    Turkish     404.0  27.834158  5.494389  39.0   7.0
+    Portuguese  407.0  27.791155  4.963723  39.0  11.0
+    Korean      413.0  25.980630  6.019355  40.0  12.0
+    German      400.0  27.725000  5.880546  40.0  13.0
+    Italian     423.0  28.699764  4.388392  38.0  20.0
+
+
+We train BI-LSTM models (500 epochs, SGD learning rate=0.5) for sentences in every lanugage respectively, and then test the tagging accuracy on sentences in other languages. That is, we train a POS tagger based on sentences written by learners with Japanese native language background, and use the tagger to tag sentences written by learners with other native language background. The following are the results.
+
+| Train\Test | Russian | French | Spanish | Japanese | Chinese | Turkish | Portuguese | Korean | German | Italian |
+| ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- |: ------------- :| 
+| Russian | 87.71% | 77.37% | 77.36% | 76.41% | 76.09% | 77.78% | 76.58% | 76.78% | 77.91% | 76.46% |
+| French | 76.92% | 89.76% | 78.34% | 77.21% | 77.56% | 79.17% | 78.23% | 77.36% | 78.91% | 78.08% |
+| Spanish | 77.07% | 78.82% | 89.39% | 77.73% | 77.34% | 79.07% | 77.93% | 76.90% | 79.49% | 77.63% |
+| Japanese | 76.01% | 77.15% | 77.40% | 87.61% | 76.58% | 77.50% | 76.38% | 76.60% | 78.24% | 76.52% |
+| Chinese | 81.26% | 81.57% | 81.32% | 81.99% | 94.73% | 82.92% | 81.52% | 81.90% | 81.45% | 80.82% |
+| Turkish | 74.72% | 76.17% | 76.13% | 75.22% | 74.70% | 86.92% | 75.84% | 75.53% | 76.64% | 75.55% |
+| Portuguese | 80.74% | 82.33% | 82.37% | 81.41% | 81.05% | 82.39% | 94.98% | 81.99% | 82.40% | 82.45% |
+| Korean | 80.05% | 80.78% | 80.70% | 81.19% | 80.24% | 81.64% | 80.86% | 94.61% | 81.10% | 79.84% |
+| German | 79.94% | 81.96% | 81.61% | 80.97% | 80.59% | 82.00% | 81.62% | 80.68% | 95.84% | 81.82% |
+| Italian | 77.31% | 78.99% | 78.58% | 78.06% | 77.51% | 79.05% | 78.88% | 77.18% | 79.92% | 89.61% |
 
 
 ## References
