@@ -57,7 +57,7 @@ def main():
     model.cuda()
     model.set_train_data(X_train)
     model.set_dev_data(X_dev)
-    model.train(epoch=10, lr=0.5, minibatch_size=1)
+    model.train(epoch=10, lr=0.5)
 
     preds = []
     actuals = []
