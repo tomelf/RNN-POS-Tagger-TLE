@@ -15,7 +15,7 @@ I will apply the above models on two tasks:
 1. Continuous POS tagging with RNNs
 2. POS resemblance between learners with different native language background
 
-(**Update 2018/04/18: task 2 is added**)  
+(**Update 2018/04/18: task 2 is added (not yet completed)**)  
 (**Update 2018/04/14: the BI-LSTM is added**)  
 (**Update 2018/04/12: the basic LSTM and task 1 is added**)  
 
