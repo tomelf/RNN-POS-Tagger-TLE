@@ -53,11 +53,11 @@ def main():
     EMBEDDING_DIM = 300
     HIDDEN_DIM = 200
 
-    model = LSTMPOSTagger(EMBEDDING_DIM, HIDDEN_DIM, tag_to_ix, bidirectional=False)
+    model = LSTMPOSTagger(EMBEDDING_DIM, HIDDEN_DIM, tag_to_ix, bidirectional=True)
     model.cuda()
     model.set_train_data(X_train)
     model.set_dev_data(X_dev)
-    model.train(epoch=10, lr=0.5)
+    model.train(epoch=100, lr=0.5)
 
     preds = []
     actuals = []
