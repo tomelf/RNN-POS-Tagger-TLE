@@ -427,17 +427,17 @@ The following is the best performance after 100 epochs:
 
 | Model | Train Accuracy | Dev Accuracy  | Test Accuracy |
 | ------------- |:-------------|:-------------|:-------------:|
-| LSTM  | 89.28% | 83.90% | 89.20% |
-| BI-LSTM  | 93.25% | 88.00% | 93.30% |
+| LSTM  | 89.28% | 83.90% | 83.31% |
+| BI-LSTM  | 93.25% | 88.00% | 88.00% |
 
 - lr = 0.1
 
 | Model | Train Accuracy | Dev Accuracy  | Test Accuracy |
 | ------------- |:-------------|:-------------|:-------------:|
-| LSTM  | 73.77% | 71.86% | 74.11% |
-| BI-LSTM  | 78.37% | 76.17% | 78.54% |
+| LSTM  | 73.77% | 71.86% | 70.9% |
+| BI-LSTM  | 78.37% | 76.17% | 75.62% |
 
-The BI-LSTM model consistantly performs better than the LSTM model and achieve 93% in accuracy (lr=0.5). 
+The BI-LSTM model consistantly performs better than the LSTM model and achieve 88% in accuracy (lr=0.5). 
 
 #### Parameter Tuning
 
