@@ -1,0 +1,76 @@
+NS_TYPE,DESCRIPTION,INFO
+AGN,Noun agreement,AGREEMENT
+AGV,Verb agreement,AGREEMENT
+CL,Collocation error,STYLE
+CN,Noun countability error,NOUN
+ID,Incorrect formation determiner,DET
+IV,Incorrect formation verb,VERB
+MA,Missing pronoun,PRONOUN
+MD,Missing determiner,DET
+MT,Missing preposition,PREP
+MV,Missing verb,VERB
+RA,Replace pronoun,PRONOUN
+RD,Replace determiner,DET
+RJ,Replace Adjective,ADJ
+RN,Replace noun,NOUN
+RT,Replace preposition,PREP
+RV,Replace verb,VERB
+RY,Replace adverb,ADV
+UA,Unnecessary pronoun,PRONOUN
+UD,Unnecessary determiner,DET
+UT,Unnecessary preposition,PREP
+UV,Unnecessary Verb,VERB
+TV,Tense verb,VERB
+AGA,Pronoun (anaphoric) agreement,AGREEMENT
+AGD,Determiner agreement,AGREEMENT
+AGQ,Quantifier agreement,AGREEMENT
+AS,Incorrect argument structure,VERB
+CD,Wrong determiner because of noun countability,NOUN
+CE,Compound error,NOUN
+CQ,Wrong quantifier because of noun contability,NOUN
+DA,Wrongly derived pronoun,PRONOUN
+DD,Wrongly derived determiner,DET
+DV,Wrongly derived verb,VERB
+FD,Wrong form determiner,DET
+FJ,Wrong form adjective,ADJ
+FY,Wrong form adverb,ADV
+W,Word order,WO
+X,Incorrect formation of negation,NEG
+DJ,Wrongly derived adjective,ADJ
+DN,Wrongly derived noun,NOUN
+DY,Wrongly derived adverb,ADV
+FN,Wrong form noun,NOUN
+FV,Wrong form verb,VERB
+IJ,Incorrect formation adjective,ADJ
+IN,Incorrect formation noun,NOUN
+IQ,Incorrect formation quantifier,QUANT
+L,Inappropriate register,COLLOCATION
+MC,Missing conjunction,CONJ
+MJ,Missing adjective,ADJ
+MN,Missing noun,NOUN
+MQ,Missing quantifier,QUANT
+MY,Missing adverb,ADV
+RC,Replace conjunction,CONJ
+RQ,Replace quantifier,QUANT
+UC,Unnecessary conjunction,CONJ
+UJ,Unnecessary adjective,ADJ
+UN,Unnecessary noun,NOUN
+UQ,Unnecessary quantifier,QUANT
+UY,Unnecessary adverb,ADV
+AG,Argeement,AGREEMENT
+FQ,Wrong form quantifier,QUANT
+DQ,Wrongly derived quantifier,QUANT
+IY,Incorrect formation adverb,ADV
+FA,Wrong form pronoun,PRONOUN
+DI,?,OTHER
+IA,Incorrect formation pronoun,PRONOUN
+DT,Wrongly derived preposition,PREP
+UP,Unnecessary punctuation,PUNCT
+MP,Missing punctuation,PUNCT
+RP,Replace punctuation,PUNCT
+S,Spelling,SPELLING
+SA,American spelling,SPELLING
+SX,Spelling confusion error,SPELLING
+M,Something missing,OTHER
+R,Replace,OTHER
+U,Unnecessary,OTHER

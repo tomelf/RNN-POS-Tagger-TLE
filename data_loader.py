@@ -17,6 +17,8 @@ def conllu_meta_parse_line(line):
         return sent_m.group(1)
 
 def conllu_meta_parse(text):
+    ns_types_df = pd.read_csv("dataset/UD_English-ESL/ns_type.csv")
+    ns_types_list = ns_types_df["NS_TYPE"].tolist()
     meta_infos = [
         [
             conllu_meta_parse_line(line)
@@ -26,7 +28,12 @@ def conllu_meta_parse(text):
         for sentence in text.split("\n\n")
         if sentence
     ]
-    return [{"doc_id": meta_info[0], "sent": meta_info[1]} for meta_info in meta_infos]
+    ret_list = []
+    for meta_info in meta_infos:
+        error_list = re.findall('<ns type=\"([^\"]+)\">', meta_info[1])
+        errors = dict((ns, error_list.count(ns)) for ns in set(error_list))
+        ret_list.append({"doc_id": meta_info[0], "sent": meta_info[1], "errors": errors})
+    return ret_list
 
 def load_raw_conllu(load_train=True, load_dev=True, load_test=True):
     print("Load raw conllu dataset (load_train={}, load_dev={}, load_test={})".format(load_train, load_dev, load_test))
@@ -61,6 +68,7 @@ def load_post_metadata():
     filepath = "dataset/UD_English-ESL/fce-released-dataset/dataset/"
     subpaths = [f for f in listdir(filepath) if isdir(join(filepath, f))]
     stats_raw = []
+    
     for subpath in subpaths:
         subpath = join(filepath, subpath)
         files = [f for f in listdir(subpath) if isfile(join(subpath, f))]
@@ -81,8 +89,10 @@ def load_post_metadata():
                             l_age = age.text
                 for score in learner.iter('score'):
                     l_score = float(score.text)
-                stats_raw.append([l_id, l_native_lan, l_age, l_score])
-    stats_df = pd.DataFrame(stats_raw, columns=['doc_id', 'native_language', 'age_range', 'score'])
+                row = [l_id, l_native_lan, l_age, l_score]
+                stats_raw.append(row)
+    cols = ['doc_id', 'native_language', 'age_range', 'score']
+    stats_df = pd.DataFrame(stats_raw, columns=cols)
     return stats_df
 
 def load_data(load_train=True, load_dev=True, load_test=True):

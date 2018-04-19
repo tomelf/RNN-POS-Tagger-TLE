@@ -1,4 +1,3 @@
-
 # Part-of-speech tagging for Treebank of Learner English corpora with Recurrent Neural Networks
 
 ## Motivation
@@ -15,7 +14,7 @@ I will apply the above models on two tasks:
 1. Continuous POS tagging with RNNs
 2. POS resemblance between learners with different native language background
 
-(**Update 2018/04/18: task 2 is added (not yet completed)**)  
+(**Update 2018/04/18: task 2 is added**)  
 (**Update 2018/04/14: the BI-LSTM is added**)  
 (**Update 2018/04/12: the basic LSTM and task 1 is added**)  
 
@@ -72,6 +71,7 @@ train_meta.head()
       <th>id</th>
       <th>doc_id</th>
       <th>sent</th>
+      <th>errors</th>
       <th>native_language</th>
       <th>age_range</th>
       <th>score</th>
@@ -82,6 +82,7 @@ train_meta.head()
       <th>1</th>
       <td>doc2664</td>
       <td>I was &lt;ns type="S"&gt;&lt;i&gt;shoked&lt;/i&gt;&lt;c&gt;shocked&lt;/c&gt;...</td>
+      <td>{'S': 2, 'RV': 1}</td>
       <td>Russian</td>
       <td>21-25</td>
       <td>21.0</td>
@@ -90,6 +91,7 @@ train_meta.head()
       <th>2</th>
       <td>doc648</td>
       <td>I am very sorry to say it was definitely not a...</td>
+      <td>{'RT': 1, 'MT': 1}</td>
       <td>French</td>
       <td>26-30</td>
       <td>38.0</td>
@@ -98,6 +100,7 @@ train_meta.head()
       <th>3</th>
       <td>doc1081</td>
       <td>Of course, I became aware of her feelings sinc...</td>
+      <td>{'AGQ': 1}</td>
       <td>Spanish</td>
       <td>16-20</td>
       <td>36.0</td>
@@ -106,6 +109,7 @@ train_meta.head()
       <th>4</th>
       <td>doc724</td>
       <td>I also suggest that more plays and films shoul...</td>
+      <td>{'RV': 1, 'FV': 1}</td>
       <td>Japanese</td>
       <td>21-25</td>
       <td>33.0</td>
@@ -114,6 +118,7 @@ train_meta.head()
       <th>5</th>
       <td>doc567</td>
       <td>Although my parents were very happy &lt;ns type="...</td>
+      <td>{'FD': 1, 'RJ': 1, 'RT': 1, 'MT': 1}</td>
       <td>Spanish</td>
       <td>31-40</td>
       <td>34.0</td>
@@ -437,7 +442,7 @@ The following is the best performance after 100 epochs:
 | LSTM  | 73.77% | 71.86% | 70.9% |
 | BI-LSTM  | 78.37% | 76.17% | 75.62% |
 
-The BI-LSTM model consistantly performs better than the LSTM model and achieve 88% in accuracy (lr=0.5). 
+The BI-LSTM model consistantly performs better than the LSTM model and achieve 88% in testing accuracy (lr=0.5). 
 
 #### Parameter Tuning
 
